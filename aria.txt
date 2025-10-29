@@ -1,0 +1,7 @@
+Character Name: Aria
+Class: Mage
+Level: 1
+Strength: 6
+Magic: 19
+Health: 85
+Gold: 100
