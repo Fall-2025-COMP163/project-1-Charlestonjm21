@@ -8,7 +8,7 @@ Example: AI helped with file I/O error handling logic in save_character function
 """
 from fileinput import filename
 import os  # Needed to check if files exist
-8
+
 def calculate_stats(character_class, level):
     """
     Calculates base stats based on class and level
@@ -28,29 +28,31 @@ def calculate_stats(character_class, level):
         strength = 10 + (level * 3)  # Base 10, gain 3 per level
         magic = 3 + (level * 1)      # Base 3, gain 1 per level (weak at magic)
         health = 100 + (level * 10)  # Base 100, gain 10 per level (very tough)
-    
+
     elif character_class == "Mage":
         # Mages use magic
         strength = 5 + (level * 1)   # Base 5, gain 1 per level (physically weak)
         magic = 15 + (level * 4)     # Base 15, gain 4 per level (strong magic)
         health = 80 + (level * 5)    # Base 80, gain 5 per level (medium health)
-    
+
     elif character_class == "Rogue":
         # Rogues are balanced
         strength = 8 + (level * 2)   # Base 8, gain 2 per level
         magic = 8 + (level * 2)      # Base 8, gain 2 per level
         health = 70 + (level * 6)    # Base 70, gain 6 per level
-    
+
     elif character_class == "Cleric":
         # Clerics are healers with good magic
         strength = 7 + (level * 2)   # Base 7, gain 2 per level
         magic = 12 + (level * 3)     # Base 12, gain 3 per level
         health = 90 + (level * 8)    # Base 90, gain 8 per level
+
     else:
         # Default stats for unknown/invalid classes
         strength = 10
         magic = 10
         health = 100
+        
     # Return all three stats as a tuple (a group of values)
     return (strength, magic, health)
     pass
@@ -71,6 +73,18 @@ def create_character(name, character_class):
      # Use calculate_stats to get the stats for this class and level
     strength, magic, health = calculate_stats(character_class, level)
     
+     # Determine starting equipment based on class
+    if character_class == "Warrior":
+        equipment = "Iron Sword, Wooden Shield"
+    elif character_class == "Mage":
+        equipment = "Wooden Staff, Spell Book"
+    elif character_class == "Rogue":
+        equipment = "Dagger, Lockpicks"
+    elif character_class == "Cleric":
+        equipment = "Mace, Holy Symbol"
+    else:
+        equipment = "Basic Gear"
+
     # Create a dictionary to store all character info
     character = {
         "name": name,              # The name we were given
@@ -79,7 +93,8 @@ def create_character(name, character_class):
         "strength": strength,      # From calculate_stats
         "magic": magic,            # From calculate_stats
         "health": health,          # From calculate_stats
-        "gold": 100                # Everyone starts with 100 gold
+        "gold": 100,                # Everyone starts with 100 gold
+        "equipment": equipment     # Starting equipment based on class
     }
     
     # Send back the complete character
@@ -99,10 +114,12 @@ def save_character(character, filename):
     Magic: [magic]
     Health: [health]
     Gold: [gold]
+    Equipment: [equipment]
     """
     # TODO: Implement this function
     # Remember to handle file errors gracefully
-     # Get the directory path from the filename
+    # Get the directory path from the filename
+    #AI helped with file I/O error handling logic in save_character function
     directory = os.path.dirname(filename)
     
     # If there's a directory path, check if it exists
@@ -118,6 +135,7 @@ def save_character(character, filename):
     file.write(f"Magic: {character['magic']}\n")
     file.write(f"Health: {character['health']}\n")
     file.write(f"Gold: {character['gold']}\n")
+    file.write(f"Equipment: {character['equipment']}\n")
     file.close()
     return True
     pass
@@ -163,6 +181,13 @@ def load_character(filename):
         
         # Line 6: Gold: 100
     character["gold"] = int(lines[6].split(": ")[1].strip())
+
+     # Load equipment if it exists (backwards compatibility for old save files)
+     # Used ChatGPT to help with this branching logic
+    if len(lines) >= 8:
+        character["equipment"] = lines[7].split(": ")[1].strip()
+    else:
+        character["equipment"] = "Basic Gear"  # Default for old files without equipment
         
     return character
         
@@ -182,6 +207,7 @@ def display_character(character):
     Magic: 15
     Health: 80
     Gold: 100
+    Equipment: Wooden Staff, Spell Book
     """
     # TODO: Implement this function
     # Print the header
@@ -196,6 +222,7 @@ def display_character(character):
     print(f"Magic: {character['magic']}")
     print(f"Health: {character['health']}")
     print(f"Gold: {character['gold']}")
+    print(f"Equipment: {character['equipment']}")
     pass
 
 def level_up(character):
@@ -229,43 +256,45 @@ def level_up(character):
     pass
 
 # Main program area (optional - for testing your functions)
-if __name__ == "__main__":
-    print("=== CHARACTER CREATOR ===")
-    print("Test your functions here!")
+# OLD TESTING CODE COMMENTED OUT
+#if __name__ == "__main__":
+ #   print("=== CHARACTER CREATOR ===")
+  #  print("Testing all functions with BONUS EQUIPMENT feature!\n")
     
       # Test 1: Create a character
-    print("--- TEST 1: Create Character ---")
-    hero = create_character("Aria", "Mage")
-    display_character(hero)
+  #  print("--- TEST 1: Create Character ---")
+   # hero = create_character("Aria", "Mage")
+    #display_character(hero)
     
     # Test 2: Save character
-    print("\n--- TEST 2: Save Character ---")
-    success = save_character(hero, "aria.txt")
-    if success:
-        print("✓ Character saved successfully!")
-    else:
-        print("✗ Failed to save character")
+   # print("\n--- Test 2:Save and Load with Equipment---")
+   # success = save_character(hero, "aria.txt")
+    #if success:
+    #    print("✓ Character saved successfully!")
+   # else:
+    #    print("✗ Failed to save character")
     
     # Test 3: Load character
-    print("\n--- TEST 3: Load Character ---")
-    loaded = load_character("aria.txt")
-    if loaded:
-        print("✓ Character loaded successfully!")
-        display_character(loaded)
-    else:
-        print("✗ Failed to load character")
+   # print("\n--- TEST 3: Load Character ---")
+   # loaded = load_character("aria.txt")
+   # if loaded:
+      #  print("✓ Character loaded successfully!")
+     #   display_character(loaded)
+    #else:
+    #    print("✗ Failed to load character")
     
     # Test 4: Level up
-    print("\n--- TEST 4: Level Up ---")
-    print("Before level up:")
-    display_character(hero)
+   # print("\n--- TEST 4: Level Up ---")
+   # print("Before level up:")
+   # display_character(hero)
     
-    level_up(hero)
+   # level_up(hero)
     
-    print("\nAfter level up:")
-    display_character(hero)
+   # print("\nAfter level up:")
+   # display_character(hero)
     
-    print("\n=== ALL TESTS COMPLETE ===")
+   # print("\n=== ALL TESTS COMPLETE ===")
+   # print("✓ Bonus Feature: Starting Equipment by Class - IMPLEMENTED!")
     
     # Example usage:
     # char = create_character("TestHero", "Warrior")
@@ -274,26 +303,99 @@ if __name__ == "__main__":
     # loaded = load_character("my_character.txt")
     
     # Create a new character
-    hero = create_character("Gandalf", "Mage")
-    print("Starting character:")
-    display_character(hero)
+   # hero = create_character("Gandalf", "Mage")
+   # print("Starting character:")
+   # display_character(hero)
     
     # Level up once
-    print("\n--- Leveling up to 2 ---")
-    level_up(hero)
-    display_character(hero)
+   # print("\n--- Leveling up to 2 ---")
+   # level_up(hero)
+   # display_character(hero)
     
     # Level up again
-    print("\n--- Leveling up to 3 ---")
-    level_up(hero)
-    display_character(hero)
+    #print("\n--- Leveling up to 3 ---")
+   # level_up(hero)
+   # display_character(hero)
     
     # Level up multiple times
-    print("\n--- Leveling up to 10 ---")
-    for i in range(7):  # Level up 7 more times (3 → 10)
-        level_up(hero)
-    display_character(hero)
+   # print("\n--- Leveling up to 10 ---")
+    #for i in range(7):  # Level up 7 more times (3 → 10)
+    #    level_up(hero)
+    #display_character(hero)
     
     # Save the leveled character
-    save_character(hero, "gandalf_level10.txt")
-    print("\nSaved level 10 character to file!")
+   # save_character(hero, "gandalf_level10.txt")
+   # print("\nSaved level 10 character to file!")
+
+if __name__ == "__main__":
+    print("=== WELCOME TO THE CHARACTER CREATOR GAME ===\n")
+
+    character = None  # Start with no character
+
+    while True:
+        print("\nMain Menu:")
+        print("1. Create a new character")
+        print("2. Load existing character")
+        print("3. View character sheet")
+        print("4. Level up character")
+        print("5. Save character")
+        print("6. Exit")
+        
+        choice = input("Choose an option (1-6): ")
+
+        if choice == "1":
+            # Create new character
+            name = input("Enter your character's name: ")
+            print("\nChoose your class:")
+            print("Options: Warrior, Mage, Rogue, Cleric")
+            char_class = input("Enter your class: ").capitalize()
+
+            character = create_character(name, char_class)
+            print("\nCharacter created successfully!")
+            display_character(character)
+
+        elif choice == "2":
+            # Load existing character
+            filename = input("Enter the filename to load (example: aria.txt): ")
+            loaded = load_character(filename)
+            if loaded:
+                character = loaded
+                print("\nCharacter loaded successfully!")
+                display_character(character)
+            else:
+                print("\n❌ File not found. Try again.")
+
+        elif choice == "3":
+            # View character
+            if character:
+                display_character(character)
+            else:
+                print("\nNo character loaded. Please create or load one first.")
+
+        elif choice == "4":
+            # Level up
+            if character:
+                print("\nLeveling up your character...")
+                level_up(character)
+                display_character(character)
+            else:
+                print("\nNo character available. Please create or load one first.")
+
+        elif choice == "5":
+            # Save character
+            if character:
+                filename = input("Enter filename to save (example: hero.txt): ")
+                success = save_character(character, filename)
+                if success:
+                    print(f"\n✅ Character saved to '{filename}' successfully!")
+                else:
+                    print("\n❌ Failed to save character.")
+            else:
+                print("\nNo character to save.")
+
+        elif choice == "6":
+            print("\nThank you for playing! Goodbye 👋")
+            break
+
+        else:
+            print("\nInvalid choice! Please select a number from 1 to 6.")
